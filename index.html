@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jahslove Ukpong · Network Engineer</title>
+<meta name="description" content="Network Engineer building hands-on depth in switching, routing and troubleshooting, on the way to cloud security.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: an engineer's run-sheet. Left-aligned column, CLI-style section labels,
+   a status table borrowed from "show ip interface brief", and a real topology drawing. */
+:root{
+  --bg:#f4f6f8;
+  --surface:#ffffff;
+  --ink:#14202e;
+  --muted:#556375;
+  --line:#d6dde5;
+  --accent:#1d5fc4;
+  --accent-soft:#e3ecfa;
+  --ok:#1f7a4d;
+  --warn:#9a6200;
+  --idle:#7a8594;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e141c; --surface:#151e29; --ink:#e6ecf3; --muted:#9aa8b8; --line:#2a3646;
+    --accent:#6ea2f0; --accent-soft:#1a2a42; --ok:#5cc58f; --warn:#e2b155; --idle:#8994a3;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e141c; --surface:#151e29; --ink:#e6ecf3; --muted:#9aa8b8; --line:#2a3646;
+  --accent:#6ea2f0; --accent-soft:#1a2a42; --ok:#5cc58f; --warn:#e2b155; --idle:#8994a3;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+@media (max-width:420px){.wrap{padding:0 16px}}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.4rem,6vw,3.6rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.9rem;font-weight:600}
+h3{font-size:1.25rem;font-weight:600}
+p{margin:0;max-width:65ch}
+code,.mono{font-family:var(--mono);font-size:.88em}
+
+/* nav */
+nav{border-bottom:1px solid var(--line);background:var(--surface)}
+nav .wrap{display:flex;gap:20px;align-items:center;justify-content:space-between;min-height:60px;flex-wrap:wrap}
+.brand{font-family:var(--mono);font-size:.92rem;color:var(--ink);text-decoration:none}
+.brand b{color:var(--accent);font-weight:500}
+nav ul{display:flex;gap:18px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+nav ul a{color:var(--muted);text-decoration:none;font-size:.95rem}
+nav ul a:hover{color:var(--ink)}
+
+/* hero */
+.hero{padding:64px 0 48px}
+.hero .wrap{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+@media (max-width:760px){.hero .wrap{grid-template-columns:1fr}.avatar{order:-1}}
+.tagline{margin-top:14px;font-family:var(--mono);font-size:.95rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 0}
+.tagline span:not(:last-child)::after{content:"|";margin:0 10px;color:var(--line)}
+.lede{margin-top:22px;font-size:1.15rem}
+.cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.btn{display:inline-block;padding:11px 18px;border-radius:6px;font-weight:600;text-decoration:none;font-size:.98rem;border:1px solid var(--accent)}
+.btn.primary{background:var(--accent);color:var(--bg)}
+.btn.ghost{color:var(--accent);background:transparent}
+.avatar{width:176px;height:176px;border-radius:50%;background:var(--accent-soft);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--display);font-size:3.2rem;font-weight:600;color:var(--accent)}
+.avatar small{display:block;font-family:var(--mono);font-size:.62rem;color:var(--muted);font-weight:400;text-align:center;margin-top:-6px}
+
+/* sections */
+section{padding:56px 0;border-top:1px solid var(--line)}
+.prompt{font-family:var(--mono);font-size:.85rem;color:var(--muted);margin-bottom:10px}
+.prompt b{color:var(--accent);font-weight:500}
+.section-head{display:grid;gap:4px;margin-bottom:28px}
+
+/* status table */
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.95rem}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-weight:500;font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.82rem;white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.ok{color:var(--ok)} .warn{color:var(--warn)} .idle{color:var(--idle)}
+.note{margin-top:12px;color:var(--muted);font-size:.92rem}
+
+/* about */
+.about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:40px}
+@media (max-width:760px){.about-grid{grid-template-columns:1fr}}
+.about-grid p+p{margin-top:14px}
+.principle{border-left:3px solid var(--accent);padding:6px 0 6px 18px;font-family:var(--display);font-size:1.3rem;line-height:1.35}
+.facts{display:grid;gap:14px;margin:0}
+.facts div{display:grid;gap:2px}
+.facts dt{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.facts dd{margin:0}
+
+/* projects */
+.projects{display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+.project.feature{grid-column:1/-1}
+.links{display:flex;gap:16px;flex-wrap:wrap;font-size:.95rem}
+.project{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:28px;display:grid;gap:16px}
+.project.feature{grid-template-columns:1fr 1fr;gap:28px}
+@media (max-width:860px){.project.feature{grid-template-columns:1fr}}
+.project-meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.tag{font-family:var(--mono);font-size:.78rem;padding:3px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+.project ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.vlan-table{min-width:0;font-size:.88rem}
+.vlan-table td,.vlan-table th{padding:8px 12px}
+.topo{width:100%;height:auto;display:block;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.topo text{font-family:var(--mono);fill:var(--ink)}
+.topo .sub{fill:var(--muted)}
+.topo .dev{fill:var(--surface);stroke:var(--accent);stroke-width:1.5}
+.topo .link{stroke:var(--muted);stroke-width:1.5;fill:none}
+.topo .trunk{stroke:var(--accent);stroke-width:3;fill:none}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:760px){.two-col{grid-template-columns:1fr}}
+.weeks{list-style:none;padding:0;margin:0;display:grid;gap:4px;font-size:.93rem}
+.weeks li{display:grid;grid-template-columns:62px 1fr;gap:8px}
+.weeks span{font-family:var(--mono);color:var(--muted);font-size:.85rem}
+
+/* experience */
+.timeline{display:grid;gap:22px}
+.role{display:grid;grid-template-columns:220px 1fr;gap:24px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.role:last-child{border-bottom:0;padding-bottom:0}
+@media (max-width:640px){.role{grid-template-columns:1fr;gap:6px}}
+.role .org{font-family:var(--mono);font-size:.88rem;color:var(--muted)}
+.certs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.cert{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:grid;gap:4px}
+.cert .issuer{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+
+/* writing */
+.eli5{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:24px;display:grid;gap:12px;max-width:720px}
+.eli5 .label{font-family:var(--mono);font-size:.8rem;color:var(--accent)}
+
+/* contact */
+.contact-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.email{font-family:var(--mono);font-size:1rem;user-select:all}
+footer{padding:28px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<nav aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top"><b>jahslove</b>@network:~$</a>
+    <ul>
+      <li><a href="#status">Status</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <h1>Jahslove Ukpong</h1>
+      <div class="tagline">
+        <span>Network Engineer</span><span>Networking &amp; Troubleshooting</span><span>Hands-on Labs</span><span>Building Toward Cloud Security</span>
+      </div>
+      <p class="lede">I design, build and break small networks on purpose, then explain what happened in plain language. Right now I'm strengthening my switching, routing and troubleshooting depth before moving into cloud security.</p>
+      <div class="cta">
+        <a class="btn primary" href="#projects">See my lab work</a>
+        <a class="btn ghost" href="#contact">Get in touch</a>
+      </div>
+    </div>
+    <div class="avatar" role="img" aria-label="Photo placeholder">JU</div>
+  </div>
+</header>
+
+<section id="status">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="prompt"><b>$</b> show skills brief</div>
+      <h2>Where my skills stand today</h2>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th scope="col">Area</th><th scope="col">Status</th><th scope="col">Evidence</th></tr></thead>
+        <tbody id="skills-body"></tbody>
+      </table>
+    </div>
+    <p class="note">I update this table as each lab is finished. If it says "in lab", the write-up isn't published yet.</p>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about-grid">
+    <div>
+      <div class="prompt"><b>$</b> show about</div>
+      <h2 style="margin-bottom:18px">Back to fundamentals, on purpose</h2>
+      <p>I'm a network engineer with a background in IT instruction and operations, and a BSc in Information Technology from Middlesex University. I hold Cisco CCNA and CyberOps Associate certifications and the Cloud Security Alliance's CCSK.</p>
+      <p>Certifications taught me what the commands are. I'm now making sure I can explain why they work, troubleshoot when they don't, and show the evidence. That's why I build every lab from scratch, break it deliberately, and write up what I find.</p>
+      <p>My goal is cloud security engineering, built on a networking foundation that holds up under pressure.</p>
+    </div>
+    <div style="display:grid;gap:28px;align-content:start">
+      <p class="principle">"If I can't explain it simply, I probably don't understand it well enough."</p>
+      <dl class="facts">
+        <div><dt>Focus</dt><dd>Switching, routing, troubleshooting, network security</dd></div>
+        <div><dt>Heading toward</dt><dd>Cloud security engineering</dd></div>
+        <div><dt>Open to</dt><dd>Network support and engineering roles, remote network/firewall support, technical training and documentation</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="prompt"><b>$</b> show projects</div>
+      <h2>Lab work and projects</h2>
+    </div>
+    <div class="projects" id="project-list"></div>
+    <noscript><p>Turn on JavaScript to see the project list.</p></noscript>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="prompt"><b>$</b> show experience</div>
+      <h2>Experience</h2>
+    </div>
+    <div class="timeline">
+      <div class="role">
+        <div class="org">DKEJ General Contractors</div>
+        <div><h3>Operations Manager</h3><p style="margin-top:6px;color:var(--muted)">Ran day-to-day operations and supported the company's IT and systems.</p></div>
+      </div>
+      <div class="role">
+        <div class="org">NIIT</div>
+        <div><h3>Network Engineer &middot; IT Instructor</h3><p style="margin-top:6px;color:var(--muted)">Supported network infrastructure and taught networking and IT fundamentals to students.</p></div>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:48px">
+      <div class="prompt"><b>$</b> show certifications</div>
+      <h2>Education and certifications</h2>
+    </div>
+    <div class="certs">
+      <div class="cert"><span class="issuer">Middlesex University</span><strong>BSc Information Technology</strong></div>
+      <div class="cert"><span class="issuer">Cisco</span><strong>CCNA</strong></div>
+      <div class="cert"><span class="issuer">Cisco</span><strong>CyberOps Associate</strong></div>
+      <div class="cert"><span class="issuer">Cloud Security Alliance</span><strong>CCSK</strong></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="prompt"><b>$</b> show contact</div>
+    <h2>Let's talk</h2>
+    <p style="margin-top:14px">Hiring for a network role, need remote network support, or want to compare lab notes? Email me or find me on the platforms below.</p>
+    <p class="email" style="margin-top:18px">jahsloveukpong@gmail.com</p>
+    <div class="contact-row">
+      <a class="btn primary" href="mailto:jahsloveukpong@gmail.com">Email me</a>
+      <a class="btn ghost" href="https://www.linkedin.com/">LinkedIn</a>
+      <a class="btn ghost" href="https://x.com/">X</a>
+      <a class="btn ghost" href="https://github.com/">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Jahslove Ukpong &middot; Network Engineer</span>
+    <span class="mono">Still relearning. Still building.</span>
+  </div>
+</footer>
+
+
+<!-- Diagrams a project can show. Add a new <template id="diagram-NAME"> to give another project a drawing. -->
+<template id="diagram-soho">
+<svg class="topo" viewBox="0 0 440 420" role="img" aria-labelledby="topo-title">
+          <title id="topo-title">Topology: one router connected by an 802.1Q trunk to a switch serving three VLANs and a wireless access point</title>
+          <!-- router -->
+          <rect class="dev" x="160" y="28" width="120" height="52" rx="26"/>
+          <text x="220" y="52" text-anchor="middle" font-size="14" font-weight="500">R1</text>
+          <text x="220" y="69" text-anchor="middle" font-size="10" class="sub">G0/0.10 .20 .30</text>
+          <!-- trunk -->
+          <line class="trunk" x1="220" y1="80" x2="220" y2="160"/>
+          <text x="232" y="125" font-size="10" class="sub">802.1Q trunk</text>
+          <!-- switch -->
+          <rect class="dev" x="140" y="160" width="160" height="44" rx="6"/>
+          <text x="220" y="187" text-anchor="middle" font-size="14" font-weight="500">SW1</text>
+          <!-- access links -->
+          <path class="link" d="M170 204 L70 290"/>
+          <path class="link" d="M205 204 L180 290"/>
+          <path class="link" d="M240 204 L290 290"/>
+          <path class="link" d="M280 204 L385 290"/>
+          <!-- vlans -->
+          <rect class="dev" x="16" y="290" width="108" height="64" rx="6"/>
+          <text x="70" y="314" text-anchor="middle" font-size="12" font-weight="500">VLAN 10</text>
+          <text x="70" y="330" text-anchor="middle" font-size="10" class="sub">Admin</text>
+          <text x="70" y="345" text-anchor="middle" font-size="10" class="sub">.0/26</text>
+          <rect class="dev" x="126" y="290" width="108" height="64" rx="6"/>
+          <text x="180" y="314" text-anchor="middle" font-size="12" font-weight="500">VLAN 20</text>
+          <text x="180" y="330" text-anchor="middle" font-size="10" class="sub">Finance</text>
+          <text x="180" y="345" text-anchor="middle" font-size="10" class="sub">.64/26</text>
+          <rect class="dev" x="236" y="290" width="108" height="64" rx="6"/>
+          <text x="290" y="314" text-anchor="middle" font-size="12" font-weight="500">VLAN 30</text>
+          <text x="290" y="330" text-anchor="middle" font-size="10" class="sub">Cust. Service</text>
+          <text x="290" y="345" text-anchor="middle" font-size="10" class="sub">.128/26</text>
+          <rect class="dev" x="350" y="290" width="74" height="64" rx="32"/>
+          <text x="387" y="320" text-anchor="middle" font-size="12" font-weight="500">AP</text>
+          <text x="387" y="336" text-anchor="middle" font-size="10" class="sub">wireless</text>
+          <text x="220" y="398" text-anchor="middle" font-size="10" class="sub">192.168.1.0/24 split into /26 subnets</text>
+        </svg>
+</template>
+
+<script>
+/* =====================================================================
+   EDIT HERE. Everything below this box renders from these two lists.
+
+   SKILLS: status is "up" (solid), "lab" (in lab now) or "next" (planned).
+
+   PROJECTS: newest or most important first. Fields:
+     title    (required)
+     status   "Completed" | "In progress" | "Ongoing" | "Planned"
+     meta     short line: tool, dates or platforms
+     summary  one or two sentences
+     bullets  list of what you did (optional)
+     table    { head: [...], rows: [[...], ...] } (optional)
+     steps    list of [label, text] pairs, e.g. weekly milestones (optional)
+     sample   { label, text } a quoted example (optional)
+     diagram  name of a <template id="diagram-NAME"> above (optional)
+     links    list of { label, url } for GitHub, write-ups, posts (optional)
+     featured true to make the card full width (optional)
+   To add a project: copy one block, paste it at the top, change the text.
+   ===================================================================== */
+
+const SKILLS = [
+  { area: "IPv4, subnetting, TCP/IP model", status: "up", evidence: "Subnetted and documented a 3-VLAN /26 design" },
+  { area: "Switching: VLANs, trunks, interfaces", status: "up", evidence: "SOHO lab; interface status and error-counter troubleshooting" },
+  { area: "Inter-VLAN routing, DHCP", status: "up", evidence: "Router-on-a-stick with 802.1Q subinterfaces and per-VLAN DHCP pools" },
+  { area: "STP, EtherChannel, OSPF, ACLs, NAT", status: "lab", evidence: "Campus Network Lab, Nov–Dec 2026" },
+  { area: "Packet analysis (Wireshark)", status: "lab", evidence: "Campus Network Lab, week 7" },
+  { area: "Cloud networking (AWS VPC)", status: "next", evidence: "Campus Network Lab, week 8" }
+];
+
+const PROJECTS = [
+  {
+    title: "SOHO Network Design and Implementation",
+    status: "Completed",
+    meta: "Cisco Packet Tracer",
+    featured: true,
+    summary: "A small-office network for three departments, each on its own VLAN and subnet, with wireless access, DHCP and routing between departments over a single router link.",
+    bullets: [
+      "Planned a /26 subnet per department from 192.168.1.0/24 (mask 255.255.255.192)",
+      "Configured access ports per VLAN and an 802.1Q trunk to the router",
+      "Built router-on-a-stick: one physical interface, a dot1Q subinterface per VLAN, each acting as that VLAN's default gateway",
+      "Created a DHCP pool per VLAN and configured wireless access",
+      "Verified with ping, `show ip interface brief`, `show arp` and `show mac address-table`"
+    ],
+    table: {
+      head: ["VLAN", "Dept", "Subnet", "Gateway"],
+      rows: [
+        ["10", "Admin", "192.168.1.0/26", ".1"],
+        ["20", "Finance", "192.168.1.64/26", ".65"],
+        ["30", "Customer Service", "192.168.1.128/26", ".129"]
+      ]
+    },
+    diagram: "soho",
+    links: []
+  },
+  {
+    title: "Campus Network Lab: 8 weeks, one network",
+    status: "In progress",
+    meta: "Nov–Dec 2026",
+    summary: "The SOHO design grown into a multi-switch campus with a branch office and an internet edge, then rebuilt as an AWS VPC. Each week adds one layer, a break-and-fix exercise and a public write-up.",
+    steps: [
+      ["Wk 1", "Port security and switchport hardening"],
+      ["Wk 2", "Spanning Tree (Rapid PVST+)"],
+      ["Wk 3", "EtherChannel and Layer 3 switching"],
+      ["Wk 4", "DHCP relay, DHCP snooping, NTP, Syslog"],
+      ["Wk 5", "Static routing and OSPF"],
+      ["Wk 6", "ACLs, NAT and SSH hardening"],
+      ["Wk 7", "Wireshark and troubleshooting runbook"],
+      ["Wk 8", "AWS VPC design and network audit report"]
+    ],
+    links: []
+  },
+  {
+    title: "Networking Like I'm 5",
+    status: "Ongoing",
+    meta: "X · LinkedIn · Facebook",
+    summary: "A series where I explain one networking concept with an everyday analogy first, then the correct technical version and the command that proves it.",
+    sample: {
+      label: "Sample: port security",
+      text: "Picture a club bouncer with a guest list. Port security is that bouncer at one switch port: the guest list is the MAC addresses allowed in. A stranger's frames get dropped, logged, or the port shuts down, depending on the violation mode."
+    },
+    links: []
+  }
+];
+
+/* ---------------- rendering (no need to edit below) ---------------- */
+(function () {
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const inline = s => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
+  const STATUS = { up: ["ok", "up/up"], lab: ["warn", "in lab"], next: ["idle", "next"] };
+
+  document.getElementById("skills-body").innerHTML = SKILLS.map(s => {
+    const [cls, label] = STATUS[s.status] || STATUS.next;
+    return `<tr><td>${esc(s.area)}</td><td><span class="pill ${cls}">${label}</span></td><td>${esc(s.evidence || "")}</td></tr>`;
+  }).join("");
+
+  const card = p => {
+    const parts = [];
+    parts.push(`<div class="project-meta">${p.status ? `<span class="tag">${esc(p.status)}</span>` : ""}${p.meta ? `<span class="mono" style="color:var(--muted)">${esc(p.meta)}</span>` : ""}</div>`);
+    parts.push(`<h3>${esc(p.title)}</h3>`);
+    if (p.summary) parts.push(`<p>${inline(p.summary)}</p>`);
+    if (p.bullets && p.bullets.length) parts.push(`<ul>${p.bullets.map(b => `<li>${inline(b)}</li>`).join("")}</ul>`);
+    if (p.steps && p.steps.length) parts.push(`<ul class="weeks">${p.steps.map(([a, b]) => `<li><span>${esc(a)}</span>${inline(b)}</li>`).join("")}</ul>`);
+    if (p.table) parts.push(`<div class="table-scroll"><table class="vlan-table"><thead><tr>${p.table.head.map(h => `<th scope="col">${esc(h)}</th>`).join("")}</tr></thead><tbody>${p.table.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`);
+    if (p.sample) parts.push(`<div class="eli5" style="padding:18px"><div class="label">${esc(p.sample.label || "Sample")}</div><p>${inline(p.sample.text)}</p></div>`);
+    if (p.links && p.links.length) parts.push(`<div class="links">${p.links.map(l => `<a href="${esc(l.url)}">${esc(l.label)} &rarr;</a>`).join("")}</div>`);
+    const tpl = p.diagram && document.getElementById("diagram-" + p.diagram);
+    const body = `<div style="display:grid;gap:16px;align-content:start">${parts.join("")}</div>`;
+    return `<article class="project${p.featured ? " feature" : ""}">${body}${tpl ? tpl.innerHTML : ""}</article>`;
+  };
+  document.getElementById("project-list").innerHTML = PROJECTS.map(card).join("");
+})();
+</script>
+</body>
+</html>
