@@ -282,6 +282,49 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
 
 <!-- Diagrams a project can show. Add a new <template id="diagram-NAME"> to give another project a drawing. -->
+<template id="diagram-hotel">
+<svg class="topo" viewBox="0 0 460 450" role="img" aria-labelledby="hotel-title">
+  <title id="hotel-title">Hotel topology: three routers in a triangle of serial links, each with a switch serving its floor's VLANs</title>
+  <rect class="dev" x="180" y="16" width="100" height="34" rx="6"/>
+  <text x="230" y="38" text-anchor="middle" font-size="12" font-weight="500">F3-Switch</text>
+  <text x="292" y="26" font-size="10" class="sub">Floor 3</text>
+  <text x="292" y="42" font-size="11">VLAN 20 Admin</text>
+  <text x="292" y="58" font-size="11">VLAN 10 IT</text>
+  <text x="292" y="74" font-size="10" class="sub">+ Wi-Fi AP</text>
+  <line class="link" x1="230" y1="50" x2="230" y2="90"/>
+  <path class="trunk" d="M230 136 L95 214" stroke-dasharray="7 4"/>
+  <path class="trunk" d="M230 136 L365 214" stroke-dasharray="7 4"/>
+  <path class="trunk" d="M150 237 L310 237" stroke-dasharray="7 4"/>
+  <text x="112" y="168" font-size="10" class="sub" text-anchor="middle">10.10.10.0/30</text>
+  <text x="348" y="168" font-size="10" class="sub" text-anchor="middle">10.10.10.4/30</text>
+  <text x="230" y="228" font-size="10" class="sub" text-anchor="middle">10.10.10.8/30</text>
+  <rect class="dev" x="175" y="90" width="110" height="46" rx="23"/>
+  <text x="230" y="110" text-anchor="middle" font-size="13" font-weight="500">F3-Router</text>
+  <text x="230" y="126" text-anchor="middle" font-size="10" class="sub">IT server room</text>
+  <rect class="dev" x="40" y="214" width="110" height="46" rx="23"/>
+  <text x="95" y="241" text-anchor="middle" font-size="13" font-weight="500">F2-Router</text>
+  <rect class="dev" x="310" y="214" width="110" height="46" rx="23"/>
+  <text x="365" y="241" text-anchor="middle" font-size="13" font-weight="500">F1-Router</text>
+  <line class="link" x1="95" y1="260" x2="95" y2="300"/>
+  <line class="link" x1="365" y1="260" x2="365" y2="300"/>
+  <rect class="dev" x="45" y="300" width="100" height="34" rx="6"/>
+  <text x="95" y="322" text-anchor="middle" font-size="12" font-weight="500">F2-Switch</text>
+  <rect class="dev" x="315" y="300" width="100" height="34" rx="6"/>
+  <text x="365" y="322" text-anchor="middle" font-size="12" font-weight="500">F1-Switch</text>
+  <text x="95" y="356" text-anchor="middle" font-size="10" class="sub">Floor 2</text>
+  <text x="95" y="373" text-anchor="middle" font-size="11">VLAN 50 Finance</text>
+  <text x="95" y="389" text-anchor="middle" font-size="11">VLAN 40 HR</text>
+  <text x="95" y="405" text-anchor="middle" font-size="11">VLAN 30 Sales</text>
+  <text x="95" y="421" text-anchor="middle" font-size="10" class="sub">+ Wi-Fi AP</text>
+  <text x="365" y="356" text-anchor="middle" font-size="10" class="sub">Floor 1</text>
+  <text x="365" y="373" text-anchor="middle" font-size="11">VLAN 80 Reception</text>
+  <text x="365" y="389" text-anchor="middle" font-size="11">VLAN 70 Store</text>
+  <text x="365" y="405" text-anchor="middle" font-size="11">VLAN 60 Logistics</text>
+  <text x="365" y="421" text-anchor="middle" font-size="10" class="sub">+ Wi-Fi AP</text>
+  <text x="230" y="300" text-anchor="middle" font-size="10" class="sub">OSPF area 0</text>
+  <text x="230" y="316" text-anchor="middle" font-size="10" class="sub">dashed = serial</text>
+</svg>
+</template>
 <template id="diagram-soho">
 <svg class="topo" viewBox="0 0 440 420" role="img" aria-labelledby="topo-title">
           <title id="topo-title">Topology: one router connected by an 802.1Q trunk to a switch serving three VLANs and a wireless access point</title>
@@ -342,15 +385,42 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
    ===================================================================== */
 
 const SKILLS = [
-  { area: "IPv4, subnetting, TCP/IP model", status: "up", evidence: "Subnetted and documented a 3-VLAN /26 design" },
-  { area: "Switching: VLANs, trunks, interfaces", status: "up", evidence: "SOHO lab; interface status and error-counter troubleshooting" },
-  { area: "Inter-VLAN routing, DHCP", status: "up", evidence: "Router-on-a-stick with 802.1Q subinterfaces and per-VLAN DHCP pools" },
-  { area: "STP, EtherChannel, OSPF, ACLs, NAT", status: "lab", evidence: "Campus Network Lab, Nov–Dec 2026" },
+  { area: "IPv4, subnetting, TCP/IP model", status: "up", evidence: "Subnetted /26 and /30 designs; documented two addressing plans" },
+  { area: "Switching: VLANs, trunks, interfaces", status: "up", evidence: "SOHO and hotel labs; interface status and error-counter troubleshooting" },
+  { area: "Inter-VLAN routing, DHCP", status: "up", evidence: "Router-on-a-stick and DHCP pools across 8 VLANs on 3 routers" },
+  { area: "OSPF (single area), serial WAN links", status: "up", evidence: "Hotel network: 3 routers, area 0, /30 serial links" },
+  { area: "SSH, port security", status: "up", evidence: "Hotel network: SSH-only router access, sticky port security" },
+  { area: "STP, EtherChannel, ACLs, NAT", status: "lab", evidence: "Campus Network Lab, Nov–Dec 2026" },
   { area: "Packet analysis (Wireshark)", status: "lab", evidence: "Campus Network Lab, week 7" },
   { area: "Cloud networking (AWS VPC)", status: "next", evidence: "Campus Network Lab, week 8" }
 ];
 
 const PROJECTS = [
+  {
+    title: "Hotel Network Design and Implementation",
+    status: "Completed",
+    meta: "Cisco Packet Tracer \u00b7 Oct 2026",
+    featured: true,
+    summary: "A network for a three-floor hotel with eight departments. Each floor has its own router and switch, every department has its own VLAN, and the three routers share routes with OSPF over serial links.",
+    bullets: [
+      "Three routers joined in a triangle of serial links on /30 subnets (10.10.10.0, .4, .8), with clocking set on the DCE ends",
+      "Router-on-a-stick on every floor: an 802.1Q subinterface per department as its default gateway",
+      "OSPF in area 0 so every floor learns every other floor's networks",
+      "A DHCP pool per department on each floor's router; Wi-Fi with WPA2-PSK on every floor",
+      "SSH-only remote access on all routers, and sticky port security (violation: shutdown) for the IT test PC",
+      "Verified end to end: a ping from IT (floor 3) to Reception (floor 1) returned TTL=126, two router hops, then an SSH login from the test PC"
+    ],
+    table: {
+      head: ["Floor", "Departments (VLAN)", "Router"],
+      rows: [
+        ["1", "Reception 80, Store 70, Logistics 60", "F1-Router"],
+        ["2", "Finance 50, HR 40, Sales 30", "F2-Router"],
+        ["3", "Admin 20, IT 10", "F3-Router"]
+      ]
+    },
+    diagram: "hotel",
+    links: []
+  },
   {
     title: "SOHO Network Design and Implementation",
     status: "Completed",
