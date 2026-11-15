@@ -282,6 +282,46 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
 
 <!-- Diagrams a project can show. Add a new <template id="diagram-NAME"> to give another project a drawing. -->
+<template id="diagram-campus">
+<svg class="topo" viewBox="0 0 460 440" role="img" aria-labelledby="campus-title">
+  <title id="campus-title">University topology: email server behind a cloud router, main campus router and branch campus router linked by serial, each campus router trunked to a multilayer switch serving its VLANs</title>
+  <rect class="dev" x="14" y="20" width="96" height="34" rx="6"/>
+  <text x="62" y="41" text-anchor="middle" font-size="11" font-weight="500">Email server</text>
+  <text x="70" y="78" font-size="10" class="sub">20.0.0.0/30</text>
+  <line class="link" x1="62" y1="54" x2="62" y2="96"/>
+  <rect class="dev" x="14" y="96" width="96" height="40" rx="20"/>
+  <text x="62" y="120" text-anchor="middle" font-size="12" font-weight="500">Cloud</text>
+  <path class="trunk" d="M110 116 L170 116" stroke-dasharray="7 4"/>
+  <text x="140" y="106" text-anchor="middle" font-size="9" class="sub">.4/30</text>
+  <rect class="dev" x="170" y="96" width="110" height="40" rx="20"/>
+  <text x="225" y="120" text-anchor="middle" font-size="12" font-weight="500">Main router</text>
+  <path class="trunk" d="M280 116 L340 116" stroke-dasharray="7 4"/>
+  <text x="310" y="106" text-anchor="middle" font-size="9" class="sub">.0/30</text>
+  <rect class="dev" x="340" y="96" width="110" height="40" rx="20"/>
+  <text x="395" y="120" text-anchor="middle" font-size="12" font-weight="500">Branch router</text>
+  <text x="310" y="152" text-anchor="middle" font-size="9" class="sub">20 miles</text>
+  <line class="link" x1="225" y1="136" x2="225" y2="186"/>
+  <line class="link" x1="395" y1="136" x2="395" y2="186"/>
+  <text x="232" y="166" font-size="9" class="sub">trunk</text>
+  <rect class="dev" x="175" y="186" width="100" height="34" rx="6"/>
+  <text x="225" y="208" text-anchor="middle" font-size="12" font-weight="500">3650 L3</text>
+  <rect class="dev" x="345" y="186" width="100" height="34" rx="6"/>
+  <text x="395" y="208" text-anchor="middle" font-size="12" font-weight="500">3650 L3</text>
+  <text x="120" y="246" font-size="10" class="sub">Building A</text>
+  <text x="120" y="262" font-size="11">10 Admin &#183; 20 HR</text>
+  <text x="120" y="278" font-size="11">30 Finance &#183; 40 Business</text>
+  <text x="120" y="302" font-size="10" class="sub">Building B</text>
+  <text x="120" y="318" font-size="11">50 Eng &amp; Computing</text>
+  <text x="120" y="334" font-size="11">60 Art &amp; Design</text>
+  <text x="120" y="358" font-size="10" class="sub">Building C</text>
+  <text x="120" y="374" font-size="11">70 Student Labs</text>
+  <text x="120" y="390" font-size="11">80 IT (web, FTP)</text>
+  <text x="335" y="246" font-size="10" class="sub">Health &amp; Sciences</text>
+  <text x="335" y="262" font-size="11">90 Staff</text>
+  <text x="335" y="278" font-size="11">100 Student Labs</text>
+  <text x="230" y="424" text-anchor="middle" font-size="10" class="sub">RIPv2 internally &#183; static route to the email server</text>
+</svg>
+</template>
 <template id="diagram-hotel">
 <svg class="topo" viewBox="0 0 460 450" role="img" aria-labelledby="hotel-title">
   <title id="hotel-title">Hotel topology: three routers in a triangle of serial links, each with a switch serving its floor's VLANs</title>
@@ -385,17 +425,43 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
    ===================================================================== */
 
 const SKILLS = [
-  { area: "IPv4, subnetting, TCP/IP model", status: "up", evidence: "Subnetted /26 and /30 designs; documented two addressing plans" },
-  { area: "Switching: VLANs, trunks, interfaces", status: "up", evidence: "SOHO and hotel labs; interface status and error-counter troubleshooting" },
-  { area: "Inter-VLAN routing, DHCP", status: "up", evidence: "Router-on-a-stick and DHCP pools across 8 VLANs on 3 routers" },
-  { area: "OSPF (single area), serial WAN links", status: "up", evidence: "Hotel network: 3 routers, area 0, /30 serial links" },
+  { area: "IPv4, subnetting, TCP/IP model", status: "up", evidence: "Addressing plans for three lab networks, /24 to /30" },
+  { area: "Switching: VLANs, trunks, interfaces", status: "up", evidence: "Up to 10 VLANs across access and multilayer switches" },
+  { area: "Inter-VLAN routing, DHCP", status: "up", evidence: "Router-on-a-stick and DHCP pools on two campuses" },
+  { area: "Dynamic routing: OSPF and RIPv2", status: "up", evidence: "Hotel network (OSPF area 0); university network (RIPv2)" },
+  { area: "Static routing, serial WAN links", status: "up", evidence: "University network: static route to an external server" },
   { area: "SSH, port security", status: "up", evidence: "Hotel network: SSH-only router access, sticky port security" },
-  { area: "STP, EtherChannel, ACLs, NAT", status: "lab", evidence: "Campus Network Lab, Nov–Dec 2026" },
+  { area: "L3 switching (SVIs), STP, EtherChannel, ACLs, NAT", status: "lab", evidence: "Campus Network Lab, Nov\u2013Dec 2026" },
   { area: "Packet analysis (Wireshark)", status: "lab", evidence: "Campus Network Lab, week 7" },
   { area: "Cloud networking (AWS VPC)", status: "next", evidence: "Campus Network Lab, week 8" }
 ];
 
 const PROJECTS = [
+  {
+    title: "University Campus Network Design",
+    status: "Completed",
+    meta: "Cisco Packet Tracer \u00b7 Nov 2026",
+    featured: true,
+    summary: "A two-campus network for a fictional university (practice brief): ten departments, each on its own VLAN and subnet, linked across 20 miles by serial, with RIPv2 inside and a static route to an externally hosted email server.",
+    bullets: [
+      "Multilayer 3650 switches as distribution on each campus, trunked to the campus router; ten access switches, one per department",
+      "Router-on-a-stick and a DHCP pool for every VLAN on both campus routers",
+      "RIPv2 between the campuses; a separate cloud segment for the external email server",
+      "Verified with TTL: 127 within a campus (one router), 126 across campuses (two routers), 255 from the routers themselves",
+      "Wrote a design evaluation covering performance, scalability, reliability and security, including why OSPF would beat RIPv2 as the university grows"
+    ],
+    table: {
+      head: ["Campus", "Departments (VLAN)"],
+      rows: [
+        ["Main, Building A", "Admin 10, HR 20, Finance 30, Business 40"],
+        ["Main, Building B", "Eng & Computing 50, Art & Design 60"],
+        ["Main, Building C", "Student Labs 70, IT 80 (web, FTP)"],
+        ["Branch", "H&S Staff 90, Student Labs 100"]
+      ]
+    },
+    diagram: "campus",
+    links: [{ label: "Write-up and design evaluation on GitHub", url: "https://github.com/Jahslove01/university-campus-network" }]
+  },
   {
     title: "Hotel Network Design and Implementation",
     status: "Completed",
